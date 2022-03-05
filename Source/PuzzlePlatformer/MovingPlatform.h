@@ -18,10 +18,10 @@ public:
 	AMovingPlatform();
 
 	UPROPERTY(EditAnywhere)
-		float Speed = 20.0f;
+	float Speed = 20.0f;
 
 	UPROPERTY(EditAnywhere, META = (MakeEditWidget = true))
-		FVector TargetLocation;
+	FVector TargetLocation;
 
 protected:
 	virtual void BeginPlay() override;
