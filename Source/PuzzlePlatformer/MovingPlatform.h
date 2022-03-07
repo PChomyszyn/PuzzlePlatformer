@@ -23,10 +23,15 @@ public:
 	UPROPERTY(EditAnywhere, META = (MakeEditWidget = true))
 	FVector TargetLocation;
 
+
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
 
+private:
+	FVector GlobalStartLocation;
+
+	FVector GlobalTargetLocation;
 
 };
