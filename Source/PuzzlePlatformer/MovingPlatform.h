@@ -23,6 +23,8 @@ public:
 	UPROPERTY(EditAnywhere, META = (MakeEditWidget = true))
 	FVector TargetLocation;
 
+	void AddActiveTrigger();
+	void RemoveActiveTrigger();
 
 protected:
 	virtual void BeginPlay() override;
@@ -31,7 +33,9 @@ protected:
 
 private:
 	FVector GlobalStartLocation;
-
 	FVector GlobalTargetLocation;
+
+	UPROPERTY(EditAnywhere)
+	int ActiveTriggers = 1;
 
 };
