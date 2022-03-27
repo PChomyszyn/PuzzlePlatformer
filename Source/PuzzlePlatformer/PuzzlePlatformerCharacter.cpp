@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "MenuSystem/InGameMenu.h"
 
 //////////////////////////////////////////////////////////////////////////
 // APuzzlePlatformerCharacter
@@ -60,6 +61,8 @@ void APuzzlePlatformerCharacter::SetupPlayerInputComponent(class UInputComponent
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAction("Open Ingame Menu", IE_Pressed, this, &APuzzlePlatformerCharacter::OpenInGameMenu);
 
 	PlayerInputComponent->BindAxis("Move Forward / Backward", this, &APuzzlePlatformerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("Move Right / Left", this, &APuzzlePlatformerCharacter::MoveRight);
@@ -126,4 +129,9 @@ void APuzzlePlatformerCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void APuzzlePlatformerCharacter::OpenInGameMenu()
+{
+	
 }
