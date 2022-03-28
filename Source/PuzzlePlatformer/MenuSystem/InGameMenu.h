@@ -23,4 +23,10 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitButton;
+
+	UFUNCTION()
+	void CancelPressed();
+
+	UFUNCTION()
+	void QuitPressed();
 };

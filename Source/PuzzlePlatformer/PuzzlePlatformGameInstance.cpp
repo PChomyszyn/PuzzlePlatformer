@@ -26,7 +26,9 @@ UPuzzlePlatformGameInstance::UPuzzlePlatformGameInstance(const FObjectInitialize
 
 void UPuzzlePlatformGameInstance::Init()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Found Class %s"), *MenuClass->GetName());
+	UEngine* Engine = GetEngine();
+	if (!ensure(Engine != nullptr)) return;
+	Engine->OnNetworkFailure().AddUObject(this, &UPuzzlePlatformGameInstance::NetworkError);
 }
 
 void UPuzzlePlatformGameInstance::LoadMenu()
@@ -87,4 +89,17 @@ void UPuzzlePlatformGameInstance::Join(const FString& Address)
 	if (!ensure(PlayerController != nullptr)) return;
 
 	PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
+}
+
+void UPuzzlePlatformGameInstance::QuitToMenu()
+{
+	APlayerController* PlayerController = GetFirstLocalPlayerController();
+	if (!ensure(PlayerController != nullptr)) return;
+
+	PlayerController->ClientTravel("/Game/MenuSystem/MainMenu", ETravelType::TRAVEL_Absolute);
+}
+
+void UPuzzlePlatformGameInstance::NetworkError(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString)
+{
+	QuitToMenu();
 }

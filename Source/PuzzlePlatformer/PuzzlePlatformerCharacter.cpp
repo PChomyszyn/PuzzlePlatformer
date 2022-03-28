@@ -62,8 +62,6 @@ void APuzzlePlatformerCharacter::SetupPlayerInputComponent(class UInputComponent
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
-	PlayerInputComponent->BindAction("Open Ingame Menu", IE_Pressed, this, &APuzzlePlatformerCharacter::OpenInGameMenu);
-
 	PlayerInputComponent->BindAxis("Move Forward / Backward", this, &APuzzlePlatformerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("Move Right / Left", this, &APuzzlePlatformerCharacter::MoveRight);
 
@@ -129,9 +127,4 @@ void APuzzlePlatformerCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
-}
-
-void APuzzlePlatformerCharacter::OpenInGameMenu()
-{
-	
 }

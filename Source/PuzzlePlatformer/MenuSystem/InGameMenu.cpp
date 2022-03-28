@@ -12,10 +12,24 @@ bool UInGameMenu::Initialize()
 	if (!Success) return false;
 
 	if (!ensure(CancelButton != nullptr)) return false;
-	//CancelButton->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
+	CancelButton->OnPressed.AddDynamic(this, &UInGameMenu::CancelPressed);
 
 	if (!ensure(QuitButton != nullptr)) return false;
-	//QuitButton->OnClicked.AddDynamic(this, &UMainMenu::OpenJoinMenu);
+	QuitButton->OnPressed.AddDynamic(this, &UInGameMenu::QuitPressed);
 
 	return true;
+}
+
+void UInGameMenu::CancelPressed()
+{
+	Teardown();
+}
+
+void UInGameMenu::QuitPressed()
+{
+	if (MenuInterfaceI != nullptr)
+	{
+		Teardown();
+		MenuInterfaceI->QuitToMenu();
+	}
 }
