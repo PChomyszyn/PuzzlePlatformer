@@ -7,6 +7,17 @@
 #include "Components/WidgetSwitcher.h"
 #include "Components/EditableText.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Components/TextBlock.h"
+
+#include "ServerRow.h"
+
+UMainMenu::UMainMenu(const FObjectInitializer& ObjectInitializer)
+{
+	ConstructorHelpers::FClassFinder<UUserWidget> ServerRowBPClass(TEXT("/Game/MenuSystem/WBP_ServerRow"));
+	if (!ensure(ServerRowBPClass.Class != nullptr)) return;
+
+	ServerRowClass = ServerRowBPClass.Class;
+}
 
 bool UMainMenu::Initialize()
 {
@@ -19,13 +30,13 @@ bool UMainMenu::Initialize()
 	if (!ensure(JoinButton != nullptr)) return false;
 	JoinButton->OnClicked.AddDynamic(this, &UMainMenu::OpenJoinMenu);
 
-	if (!ensure(JoinButton != nullptr)) return false;
+	if (!ensure(BackButton != nullptr)) return false;
 	BackButton->OnClicked.AddDynamic(this, &UMainMenu::OpenMainMenu);
 
 	if (!ensure(JoinButton != nullptr)) return false;
-	if (!ensure(IPAddressField != nullptr)) return false;
+	//if (!ensure(IPAddressField != nullptr)) return false;
 	ConnectButton->OnClicked.AddDynamic(this, &UMainMenu::JoinServer);
-
+	
 	if (!ensure(QuitButton != nullptr)) return false;
 	QuitButton->OnClicked.AddDynamic(this, &UMainMenu::QuitToDesktop);
 
@@ -40,13 +51,55 @@ void UMainMenu::HostServer()
 	}
 }
 
+void UMainMenu::SetServerList(TArray<FString> ServerNames)
+{	
+	UWorld* World = this->GetWorld();
+	if (!ensure(World != nullptr)) return;
+	
+	ServerList->ClearChildren();
+	
+	uint32 i = 0;
+	for (const FString& ServerName : ServerNames)
+	{
+		UServerRow* Row = CreateWidget<UServerRow>(this, ServerRowClass);
+		if (!ensure(Row != nullptr)) return;
+
+		Row->ServerName->SetText(FText::FromString(ServerName));
+		Row->Setup(this, i);
+		++i;
+		
+		ServerList->AddChild(Row);
+	}
+}
+
+void UMainMenu::SelectIndex(uint32 Index)
+{
+	SelectedIndex = Index;
+	UpdateChildren();
+}
+
+void UMainMenu::UpdateChildren()
+{
+	for (int32 i = 0; i < ServerList->GetChildrenCount(); ++i)
+	{
+		UServerRow* Row = Cast<UServerRow>(ServerList->GetChildAt(i));
+		if (Row != nullptr)
+		{
+			Row->Selected = (SelectedIndex.IsSet() && SelectedIndex.GetValue() == i);
+		}
+	}
+}
+
 void UMainMenu::JoinServer()
 {
-	if (MenuInterfaceI != nullptr)
+	if (SelectedIndex.IsSet() && MenuInterfaceI != nullptr)
 	{
-		if (!ensure(IPAddressField != nullptr)) return;
-		const FString& IPAddress = IPAddressField->GetText().ToString();
-		MenuInterfaceI->Join(IPAddress);
+		UE_LOG(LogTemp, Warning, TEXT("Selected Index: %d"), SelectedIndex.GetValue());
+		MenuInterfaceI->Join(SelectedIndex.GetValue());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Selected Index not set"));
 	}
 }
 
@@ -55,6 +108,10 @@ void UMainMenu::OpenJoinMenu()
 	if (!ensure(MenuSwitcher != nullptr)) return;
 	if (!ensure(JoinMenu != nullptr)) return;
 	MenuSwitcher->SetActiveWidget(JoinMenu);
+	if (MenuInterfaceI != nullptr)
+	{
+		MenuInterfaceI->RefreshServerList();
+	}
 }
 
 void UMainMenu::OpenMainMenu()

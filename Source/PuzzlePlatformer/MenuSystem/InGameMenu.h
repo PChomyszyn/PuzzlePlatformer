@@ -14,6 +14,10 @@ class PUZZLEPLATFORMER_API UInGameMenu : public UMenuWidget
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	bool bIsGameMenuOpen;
+
 protected:
 	virtual bool Initialize() override;
 
